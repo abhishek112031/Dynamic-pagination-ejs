@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagination Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>Items List</h1>
+    
+    <!-- Add a form for adding new items -->
+    <form id="add-item-form" class="mb-3">
+      <div class="form-group">
+        <label for="itemName">Name:</label>
+        <input type="text" class="form-control" id="itemName" name="name" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Add Item</button>
+    </form>
+
+    <ul class="list-group mt-3" id="items-list">
+      <!-- Items will be displayed here -->
+    </ul>
+    <nav class="mt-4" id="pagination">
+      <!-- Pagination links will be displayed here -->
+    </nav>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    const itemsList = document.getElementById('items-list');
+    const pagination = document.getElementById('pagination');
+    const addItemForm = document.getElementById('add-item-form');
+
+    // Function to fetch items and update the page
+    function fetchItems(page) {
+      fetch(`/items?page=${page}`)
+        .then(response => response.json())
+        .then(data => {
+          itemsList.innerHTML = '';
+          data.items.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.textContent = item.name;
+            itemsList.appendChild(li);
+          });
+
+          pagination.innerHTML = '';
+          for (let i = 1; i <= data.totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${data.currentPage === i ? 'active' : ''}`;
+            li.innerHTML = `<a class="page-link" href="?page=${i}">${i}</a>`;
+            pagination.appendChild(li);
+          }
+        })
+        .catch(error => console.error(error));
+    }
+
+    // Handle form submission
+    addItemForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(addItemForm);
+      const itemName = formData.get('name');
+
+      fetch('/add-item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: itemName }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          fetchItems(data.currentPage);
+          addItemForm.reset();
+        })
+        .catch(error => console.error(error));
+    });
+
+    // Initial fetch on page load
+    fetchItems(1);
+  </script>
+</body>
+</html>
