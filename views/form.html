@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Name Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+</head>
+<body>
+
+<h1>Enter Your Name</h1>
+
+<form onsubmit="postdata(event)" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    <br><br>
+    <input type="submit" value="Submit">
+</form>
+
+<script>
+    async function postdata(event){
+        event.preventDefault();
+        try{
+
+            const data={
+                name:document.getElementById('name').value
+            }
+
+            let resp=await axios.post('/form',data);
+    
+            if(resp.status===201){
+                window.location.href='/';
+            }
+        }catch(err){
+            console.log(err)
+        }
+
+
+
+
+    }
+</script>
+
+</body>
+</html>

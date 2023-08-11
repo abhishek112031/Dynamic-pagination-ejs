@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagination Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="/styles.css"> -->
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>Items List</h1>
+    <ul class="list-group mt-3">
+      <% items.forEach(item => { %>
+        <li class="list-group-item"><%= item.name %></li>
+      <% }); %>
+    </ul>
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        <% if (currentPage > 1) { %>
+          <li class="page-item"><a class="page-link" href="?page=<%= currentPage - 1 %>"> << </a></li>
+        <% } %>
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+          </li>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+          <li class="page-item"><a class="page-link" href="?page=<%= currentPage + 1 %>">  >> </a></li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+</body>
+</html>
